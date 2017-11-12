@@ -17,7 +17,7 @@ ActiveRecord::Schema.define(version: 20171112134853) do
 
   create_table "todos", force: :cascade do |t|
     t.string "title"
-    t.boolean "checked_at"
+    t.datetime "checked_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
