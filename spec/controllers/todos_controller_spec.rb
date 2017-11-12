@@ -8,9 +8,7 @@ RSpec.describe TodosController, type: :controller do
         let(:params) { { todo: { title: 'Do a thing' } } }
 
         it "creates a global todo" do
-          expect do
-            post :create, params: params
-          end.to change(Todo, :count).by(1)
+          expect{ post :create, params: params }.to change(Todo, :count).by(1)
 
           todo = Todo.last
           expect(todo.title).to eq 'Do a thing'
@@ -24,12 +22,34 @@ RSpec.describe TodosController, type: :controller do
         let(:params) { { todo: { foo: 'bear' } } }
 
         it "returns an error" do
-          expect do
-            post :create, params: params
-          end.to change(Todo, :count).by(0)
+          expect{ post :create, params: params }.to change(Todo, :count).by(0)
 
           expect(response.status).to eq 422
         end
+      end
+    end
+
+    context "and PATCHing to /todos/check" do
+      let(:todo) { create :todo }
+      let(:params) { { id: todo.id } }
+
+      it "tells the todo to check itself" do
+        allow(controller).to receive(:todo) { todo }
+        expect(todo).to receive(:check!)
+
+        post :check, params: params
+      end
+    end
+
+    context "and PATCHing to /todos/uncheck" do
+      let(:todo) { create :todo }
+      let(:params) { { id: todo.id } }
+
+      it "tells the todo to uncheck itself" do
+        allow(controller).to receive(:todo) { todo }
+        expect(todo).to receive(:uncheck!)
+
+        post :uncheck, params: params
       end
     end
   end
