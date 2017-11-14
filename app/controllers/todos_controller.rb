@@ -1,5 +1,12 @@
 class TodosController < ApplicationController
   expose(:todo) { Todo.find_by(id: params[:id]) || Todo.new(create_params) }
+  expose(:todos) do
+    Todo.by_checked ActiveRecord::Type::Boolean.new.deserialize params[:checked]
+  end
+
+  def index
+    render json: todos
+  end
 
   def create
     if todo.save

@@ -1,9 +1,37 @@
 require 'rails_helper'
 
 RSpec.describe TodosController, type: :controller do
-
   context "when unauthenticated" do
+
+    context "and GETting /todos" do
+      it "fetches unchecked todos when checked is '0'" do
+        expect(Todo).to receive(:by_checked).with(false)
+        get :index, params: { checked: '0' }
+      end
+
+      it "fetches unchecked todos when checked is 'false'" do
+        expect(Todo).to receive(:by_checked).with(false)
+        get :index, params: { checked: 'false' }
+      end
+
+      it "fetches unchecked todos when checked is nil" do
+        expect(Todo).to receive(:by_checked).with(nil)
+        get :index
+      end
+
+      it "fetches checked todos when checked is '1'" do
+        expect(Todo).to receive(:by_checked).with(true)
+        get :index, params: { checked: '1' }
+      end
+
+      it "fetches checked todos when checked is 'true'" do
+        expect(Todo).to receive(:by_checked).with(true)
+        get :index, params: { checked: 'true' }
+      end
+    end
+
     context "and POSTing to /todos" do
+
       context "and valid params" do
         let(:params) { { todo: { title: 'Do a thing' } } }
 
@@ -52,5 +80,6 @@ RSpec.describe TodosController, type: :controller do
         post :uncheck, params: params
       end
     end
+
   end
 end
