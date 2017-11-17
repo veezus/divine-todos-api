@@ -1,7 +1,11 @@
 class TodosController < ApplicationController
   expose(:todo) { Todo.find_by(id: params[:id]) || Todo.new(create_params) }
   expose(:todos) do
-    Todo.by_checked ActiveRecord::Type::Boolean.new.deserialize params[:checked]
+    if checked_param
+      Todo.by_checked checked_param
+    else
+      Todo.all
+    end
   end
 
   def index
@@ -36,5 +40,9 @@ class TodosController < ApplicationController
 
   def create_params
     params.fetch(:todo, {}).permit :title, :checked
+  end
+
+  def checked_param
+    ActiveRecord::Type::Boolean.new.deserialize params[:checked]
   end
 end
